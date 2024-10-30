@@ -21,8 +21,22 @@ spec:
             - name: DATABASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: rollout-api-config
+                  name: rollout-api-configmap
                   key: DATABASE_URL
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          volumeMounts:
+          - mountPath: /data
+            name: db-storage
+        volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+          claimName: rollout-api-pv
 ---
 apiVersion: v1
 kind: Service
@@ -36,18 +50,7 @@ spec:
       port: 80
       targetPort: 8080
   type: LoadBalancer
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: rollout-api-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -63,6 +66,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: rollout-api-config
-data:
+  name: rollout-api-configmap
+stringData:
   DATABASE_URL: "jdbc:sqlite:/data/rollout.db"
