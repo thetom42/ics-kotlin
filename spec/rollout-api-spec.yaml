@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  title: Rollout API
+  version: 1.0.0
+paths:
+  /persist:
+    post:
+      summary: Persist rollout objects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Rollout'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+  /report:
+    get:
+      summary: Get rollout objects by date range
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rollout'
+  /health:
+    get:
+      summary: Get health status
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+components:
+  schemas:
+    Rollout:
+      type: object
+      properties:
+        id:
+          type: string
+        data:
+          type: object

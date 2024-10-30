@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  rollout-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=jdbc:sqlite:/data/rollout.db
+    depends_on:
+      - db
+
+  db:
+    image: nouchka/sqlite3
+    volumes:
+      - rollout-data:/data
+
+volumes:
+  rollout-data:
